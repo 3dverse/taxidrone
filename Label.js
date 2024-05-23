@@ -79,7 +79,9 @@ canvas.addEventListener("click", (event) => detectEntityOnClick (event));
 const detectEntityOnClick = async (event) => {
     var  screenTarget = await SDK3DVerse.engineAPI.castScreenSpaceRay(event.clientX, event.clientY);
 
-    if(!screenTarget.pickedPosition) return;
+    if(!screenTarget.pickedPosition) {
+        UnselectAll();
+    };
     
     clickedEntity = screenTarget.entity;
 
@@ -87,9 +89,8 @@ const detectEntityOnClick = async (event) => {
 
         // mostrar una anotacion si se clickea una entidad especifica 
         if(clickedEntity.getEUID() ==  id_r_door_paint || clickedEntity.getEUID() == id_r_door_paint || clickedEntity.getEUID() == id_hull){
-           if(!isbody){
-               UnselectBlade1();
-               UnselectBlade2();
+            if(!isbody){
+               UnselectAll();
                SelectHull();
                isbody = true;
                isblade1 = false;
@@ -97,15 +98,13 @@ const detectEntityOnClick = async (event) => {
 
            }
            else {
-               UnselectHull();
-               isbody = false;
+                UnselectAll();
            }
        }  
 
-       if(clickedEntity.getEUID() ==  id_aspa1_bl || clickedEntity.getEUID() == id_aspa1_br || clickedEntity.getEUID() == id_aspa1_fl || clickedEntity.getEUID() == id_aspa1_fl){
-           if(!isblade1){
-               UnselectHull();
-               UnselectBlade2();
+       else if(clickedEntity.getEUID() ==  id_aspa1_bl || clickedEntity.getEUID() == id_aspa1_br || clickedEntity.getEUID() == id_aspa1_fl || clickedEntity.getEUID() == id_aspa1_fl){
+            if(!isblade1){
+               UnselectAll();
                SelectBlade1();
                
                isblade1 = true;
@@ -114,15 +113,13 @@ const detectEntityOnClick = async (event) => {
                isbody = false;
            }
            else {
-               UnselectBlade1();
-               isblade1 = false;
+                UnselectAll();
            }
        }  
 
-       if(clickedEntity.getEUID() ==  id_aspa2_bl || clickedEntity.getEUID() == id_aspa2_br || clickedEntity.getEUID() == id_aspa2_fl || clickedEntity.getEUID() == id_aspa2_fl){
-           if(!isblade2){
-               UnselectHull();
-               UnselectBlade1();
+       else if(clickedEntity.getEUID() ==  id_aspa2_bl || clickedEntity.getEUID() == id_aspa2_br || clickedEntity.getEUID() == id_aspa2_fl || clickedEntity.getEUID() == id_aspa2_fl){
+        if(!isblade2){
+               UnselectAll();
                SelectBlade2();
                
                isblade2 = true;
@@ -130,10 +127,13 @@ const detectEntityOnClick = async (event) => {
                isbody = false;
            }
            else {
-               UnselectBlade2();
-               isblade2 = false;
+                UnselectAll();
            }
-       }  
+        }  
+        
+        else {
+            UnselectAll();
+        }
        
    }
    
@@ -148,20 +148,7 @@ async function SelectHull(){
     body = temphull[0];
 
     body.select();
-    console.log('select');
 }
-
-async function UnselectHull(){
-    SetVisibilityAnotations("none");
-
-    var temphull = await SDK3DVerse.engineAPI.findEntitiesByEUID(id_body);
-    body = temphull[0];
-
-    body.unselect();
-
-    console.log('unselect');
-
-} 
 
 async function SelectBlade1(){
     //Show Annotation
@@ -174,19 +161,7 @@ async function SelectBlade1(){
   
 
     blade1.select();
-    console.log('select blade 1');
 }
-
-async function UnselectBlade1(){
-    SetVisibilityAnotations("none");
-
-    var tempblade1 = await SDK3DVerse.engineAPI.findEntitiesByEUID(id_blade1);
-    blade1 = tempblade1[0];
-
-    blade1.unselect();
-
-    console.log('unselect blade 1');
-} 
 async function SelectBlade2(){
     //Show Annotation
     SetVisibilityAnotations("flex");
@@ -199,16 +174,12 @@ async function SelectBlade2(){
   
 
     blade2.select();
-    console.log('select blade 2');
 }
 
-async function UnselectBlade2(){
+function UnselectAll() {
+    SDK3DVerse.engineAPI.unselectAllEntities();
     SetVisibilityAnotations("none");
-
-    var tempblade2 = await SDK3DVerse.engineAPI.findEntitiesByEUID(id_blade1);
-    blade2 = tempblade2[0];
-
-    blade2.unselect();
-
-    console.log('unselect blade 1');
-} 
+    isbody = false;
+    isblade1 = false;
+    isblade2 = false;
+}

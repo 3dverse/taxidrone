@@ -74,7 +74,7 @@ async function initApp() {
     IntitUI();
 
     SDK3DVerse.updateControllerSetting({
-        speed: 1.5,
+        speed: 1,
         sensivity: 0.05,
         damping: 0.65,
         angularDamping: 0.65,
